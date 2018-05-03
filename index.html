@@ -1,0 +1,72 @@
+<html>
+<head>
+    <style>
+        table {
+            font-family: arial, sans-serif;
+            border-collapse: collapse;
+            width: 100%;
+        }
+        
+        td, th {
+            border: 1px solid #dddddd;
+            text-align: left;
+            padding: 8px;
+        }
+        
+        tr:nth-child(even) {
+            background-color: #dddddd;
+        }
+        </style>
+</head>
+<body>
+    <script type="text/javascript">
+        var sock = null;
+        var wsuri = "ws://127.0.0.1:8080/ticker";
+
+        window.onload = function() {
+
+            console.log("onload");
+
+            sock = new WebSocket(wsuri);
+
+            sock.onopen = function() {
+                console.log("connected to " + wsuri);
+            }
+
+            sock.onclose = function(e) {
+                console.log("connection closed (" + e.code + ")");
+            }
+
+            sock.onmessage = function(e) {
+                console.log("message received: " + e.data);
+                var ticker = JSON.parse(e.data)
+            
+                console.log(ticker)
+                var output = document.getElementById("output");
+                var new_data = "<tr><td>" + ticker.timestamp + "</td>" +
+                    "<td>" + ticker.last + "</td><td>" + ticker.high + "</td>" +
+                    "<td>" + ticker.low + "</td><td>" + ticker.open + "</td>" +
+                    "<td>" + ticker.bid + "</td><td>" + ticker.ask + "</td>" +
+                    "<td>" + ticker.vwap + "</td><td>" + ticker.volume + "</td></tr>";
+                output.innerHTML = output.innerHTML + new_data;
+            }
+        };
+    </script>
+    <h1>WebSocket Ticker Data</h1>
+    <table>
+        <tr>
+            <th>Timestamp</th>
+            <th>Last</th>
+            <th>High</th>
+            <th>Low</th>
+            <th>Open</th>
+            <th>Bid</th>
+            <th>Ask</th>
+            <th>VWAP</th>
+            <th>Volume</th>
+        </tr>
+        <tbody id="output">
+        </tbody>
+    </table>
+</body>
+</html>
